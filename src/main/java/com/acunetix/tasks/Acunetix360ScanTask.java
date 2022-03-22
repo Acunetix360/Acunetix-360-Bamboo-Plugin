@@ -1,5 +1,4 @@
 package com.acunetix.tasks;
-
 import com.acunetix.ConfigManager;
 import com.acunetix.model.ScanRequest;
 import com.acunetix.model.ScanRequestResult;
@@ -16,8 +15,10 @@ import com.atlassian.bamboo.v2.build.BuildContext;
 import com.atlassian.bamboo.variable.CustomVariableContext;
 import com.atlassian.bamboo.variable.VariableDefinitionContext;
 import com.atlassian.spring.container.ContainerManager;
+import com.atlassian.plugin.spring.scanner.annotation.imports.ComponentImport;
+import javax.inject.Inject;
 import org.apache.http.HttpResponse;
-
+import com.atlassian.bamboo.configuration.AdministrationConfigurationAccessor;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -25,16 +26,22 @@ import java.util.*;
 public class Acunetix360ScanTask implements TaskType {
     private BuildLogger buildLogger;
     private ConfigManager configManager = new ConfigManager();
+    private AdministrationConfigurationAccessor administrationConfigurationAccessor;
+
+    @Inject
+    public Acunetix360ScanTask(
+            @ComponentImport final AdministrationConfigurationAccessor administrationConfigurationAccessor) {
+        this.administrationConfigurationAccessor = administrationConfigurationAccessor;
+    }
 
     public AdministrationConfiguration getAdministrationConfiguration() {
-        return (AdministrationConfiguration) ContainerManager
-                .getComponent("administrationConfiguration");
+        return administrationConfigurationAccessor.getAdministrationConfiguration();
     }
 
     public Map<String, VariableDefinitionContext> getCustomVariables(
             final TaskContext taskContext) {
-        final CustomVariableContext customVariableContext =
-                (CustomVariableContext) ContainerManager.getComponent("customVariableContext");
+        final CustomVariableContext customVariableContext = (CustomVariableContext) ContainerManager
+                .getComponent("customVariableContext");
 
         return customVariableContext.getVariableContexts();
     }
@@ -50,8 +57,7 @@ public class Acunetix360ScanTask implements TaskType {
     private TaskResult ScanRequestHandler(final TaskContext taskContext) throws TaskException {
         final TaskResultBuilder builder = TaskResultBuilder.newBuilder(taskContext).failed();
 
-        final Map<String, VariableDefinitionContext> customVariables =
-                getCustomVariables(taskContext);
+        final Map<String, VariableDefinitionContext> customVariables = getCustomVariables(taskContext);
         final ConfigurationMap configurationMap = taskContext.getConfigurationMap();
 
         final String serverURL = configManager.getApiUrl();
@@ -66,15 +72,14 @@ public class Acunetix360ScanTask implements TaskType {
         logInfo("Requesting scan...");
 
         try {
-            ScanRequest scanRequest =
-                    new ScanRequest(serverURL, apiToken, scanType, websiteId, profileId, vcsCommit);
+            ScanRequest scanRequest = new ScanRequest(serverURL, apiToken, scanType, websiteId, profileId, vcsCommit);
 
             HttpResponse scanRequestResponse = scanRequest.scanRequest();
             logInfo("Response status code: " + scanRequestResponse.getStatusLine().getStatusCode());
 
-            ScanRequestResult scanRequestResult =
-                    new ScanRequestResult(scanRequestResponse, serverURL, apiToken);
-            // HTTP status code 201 refers to created. This means our request added to queue.
+            ScanRequestResult scanRequestResult = new ScanRequestResult(scanRequestResponse, serverURL, apiToken);
+            // HTTP status code 201 refers to created. This means our request added to
+            // queue.
             // Otherwise it is failed.
             if (scanRequestResult.getHttpStatusCode() == 201 && !scanRequestResult.isError()) {
                 ScanRequestSuccessHandler(taskContext, builder, customVariables, scanRequestResult);
@@ -118,8 +123,7 @@ public class Acunetix360ScanTask implements TaskType {
 
         final BuildContext buildContext = taskContext.getBuildContext();
 
-        final AdministrationConfiguration administrationConfiguration =
-                getAdministrationConfiguration();
+        final AdministrationConfiguration administrationConfiguration = getAdministrationConfiguration();
 
         final BuildChanges buildChanges = buildContext.getBuildChanges();
 
