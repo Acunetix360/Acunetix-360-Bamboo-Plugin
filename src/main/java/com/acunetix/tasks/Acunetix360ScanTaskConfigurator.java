@@ -2,6 +2,7 @@ package com.acunetix.tasks;
 
 import com.acunetix.ConfigManager;
 import com.acunetix.model.ScanRequest;
+import com.acunetix.model.TaskDialogProperties;
 import com.acunetix.model.ScanType;
 import com.acunetix.model.WebsiteModelRequest;
 import com.acunetix.utility.AppCommon;
@@ -68,6 +69,7 @@ public class Acunetix360ScanTaskConfigurator extends AbstractTaskConfigurator {
                 context.put(WebsiteModelRequest.ERROR_MESSAGE_Literal, errorMessage);
             } else {
                 context.put(WebsiteModelRequest.Websites_JSON_MODEL_Literal, websitesJsonModel);
+                context.put(TaskDialogProperties.HIDE_WEBSITE_LIST_Literal, configManager.getHideWebsiteList());
             }
         }
     }
@@ -119,6 +121,7 @@ public class Acunetix360ScanTaskConfigurator extends AbstractTaskConfigurator {
         config.put(ScanRequest.SCAN_TYPE_Literal, params.getString(ScanRequest.SCAN_TYPE_Literal));
         config.put(ScanRequest.WEBSITE_ID_Literal, params.getString(ScanRequest.WEBSITE_ID_Literal));
         config.put(ScanRequest.PROFILE_ID_Literal, params.getString(ScanRequest.PROFILE_ID_Literal));
+        config.put(TaskDialogProperties.HIDE_WEBSITE_LIST_Literal, params.getString(TaskDialogProperties.HIDE_WEBSITE_LIST_Literal));
 
         return config;
     }

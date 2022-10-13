@@ -9,6 +9,7 @@ import com.atlassian.bamboo.ww2.aware.permissions.GlobalAdminSecurityAware;
 import com.atlassian.bandana.BandanaManager;
 import com.atlassian.sal.api.component.ComponentLocator;
 import com.acunetix.model.ScanRequestBase;
+import com.acunetix.model.TaskDialogProperties;
 import com.acunetix.utility.AppCommon;
 
 
@@ -16,6 +17,7 @@ public class PluginSettings extends BambooActionSupport implements GlobalAdminSe
 
 	private String apiUrl;
 	private String apiToken;
+	private String hideWebsiteList;
 	private BandanaManager bandanaManager;
 
 	public PluginSettings() {
@@ -44,11 +46,18 @@ public class PluginSettings extends BambooActionSupport implements GlobalAdminSe
 		this.apiToken = apiToken;
 	}
 
+	public String getHideWebsiteList() {
+		return hideWebsiteList;
+	}
+
+	public void setHideWebsiteList(String hideWebsiteList) {
+		this.hideWebsiteList = hideWebsiteList;
+	}
 
 	public String doEdit() {
 		setApiUrl(getValue(ScanRequestBase.API_URL_Literal));
 		setApiToken(getValue(ScanRequestBase.API_TOKEN_Literal));
-
+		setHideWebsiteList(getValue(TaskDialogProperties.HIDE_WEBSITE_LIST_Literal));
 		return INPUT;
 	}
 
@@ -69,6 +78,7 @@ public class PluginSettings extends BambooActionSupport implements GlobalAdminSe
 		bandanaManager.init();
 		setValue(ScanRequestBase.API_URL_Literal, getApiUrl());
 		setValue(ScanRequestBase.API_TOKEN_Literal, getApiToken());
+		setValue(TaskDialogProperties.HIDE_WEBSITE_LIST_Literal, getHideWebsiteList());
 		addActionMessage("Global settings updated.");
 
 		return SUCCESS;

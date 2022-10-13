@@ -42,6 +42,8 @@ cancelUri='/admin/administer.action']
             </button>
             <div id="acunetix360TestConnectionButtonSpinner"
                  style="display: inline-block;margin: 5px;margin-left:10px;"></div>
+            <h2 style="margin-left: 55px;">Plugin Settings</h2>
+            [@ww.checkbox name='hideWebsiteList' toggle='true' label='Hide website list' description='In the task configuration dialog, replace the websites dropdown list with a simple text field to enter the Website ID.'/]
         </section>
     </div>
 </div>
