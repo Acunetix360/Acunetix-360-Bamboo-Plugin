@@ -31,6 +31,22 @@
         Performs full scan with provided profile settings.
     </div>
 </div>
+
+[#if (acunetix360HideWebsiteList)??]
+<div class="field-group" style="display: none">
+    <label for="acunetix360WebsiteID">Website ID
+        <span class="aui-icon icon-required">(required)</span>
+    </label>
+    <input type="text" name="acunetix360WebsiteID" id="acunetix360WebsiteID"
+           value="${acunetix360WebsiteID!""}">
+    <span class="aui-icon icon-inline-help"><span>Help</span></span>
+    <div class="error">${acunetix360WebsiteIDErrorError!""}</div>
+    <div class="field-help description hidden">
+        Unique Id for your website on Acunetix 360, which will be scanned.<br>
+        Format should be like xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx.
+    </div>
+</div>
+[#else]
 <div class="field-group" style="display: none">
     <label for="acunetix360WebsiteID">Website Deploy URL
         <span class="aui-icon icon-required">(required)</span>
@@ -46,6 +62,8 @@
         This address will be scanned.
     </div>
 </div>
+[/#if]
+
 <div class="field-group" style="display: none">
     <label for="acunetix360ProfileID">Profile Name
         <span class="aui-icon icon-required">(required)</span>
@@ -133,11 +151,15 @@
     function updateNcParamsAndUI() {
         ncScanParams.scanType = ncScanTypeInput.val();
 
+        [#if (acunetix360HideWebsiteList)??]
+        ncScanParams.websiteId = ncWebsiteIdInput.val();
+        [#else]
         ncWebsiteIdInput.val(ncWebsiteIdDummySelect.val());
         ncScanParams.websiteId = ncWebsiteIdInput.val();
         if (!ncScanParams.websiteId) {
             ncProfileIdDummySelect.val("");
         }
+        [/#if]
 
         ncProfileIdInput.val(ncProfileIdDummySelect.val());
         ncScanParams.profileId = ncProfileIdInput.val();

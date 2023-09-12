@@ -4,6 +4,7 @@ import com.atlassian.bamboo.bandana.PlanAwareBandanaContext;
 import com.atlassian.bandana.BandanaManager;
 import com.atlassian.spring.container.ContainerManager;
 import com.acunetix.model.ScanRequestBase;
+import com.acunetix.model.TaskDialogProperties;
 import com.acunetix.utility.AppCommon;
 
 
@@ -28,6 +29,10 @@ public class ConfigManager {
 
 	public String getApiToken() {
 		return get(ScanRequestBase.API_TOKEN_Literal);
+	}
+
+	public String getHideWebsiteList() {
+		return get(TaskDialogProperties.HIDE_WEBSITE_LIST_Literal);
 	}
 
 	public String getScanTaskID(String planKey, String buildNumber) {
